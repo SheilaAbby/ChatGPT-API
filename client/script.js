@@ -1,4 +1,4 @@
-import bot from './assets/bot.svg';
+import bot from './assets/bot.svg'
 import user from './assets/user.svg'
 
 const form = document.querySelector('form');
@@ -19,7 +19,6 @@ function loader (element) {
     if(element.textContent === '...'){
       element.textContent = '';
     }
-
   }, 300);
 }
 
@@ -52,18 +51,17 @@ function chatStripe (isAi, value, uniqueId){
   return (
     `
       <div class="wrapper ${isAi && 'ai'}">
-        <div class="chat">
-          <div className="profile">
-            <img 
-              src="${isAi ? bot: user}" 
-              alt="${isAi ? 'bot':'user'}"
-            />
+          <div class="chat">
+              <div class="profile">
+                  <img 
+                    src=${isAi ? bot : user} 
+                    alt="${isAi ? 'bot' : 'user'}" 
+                  />
+              </div>
+              <div class="message" id=${uniqueId}>${value}</div>
           </div>
-          <div class="message" id=${uniqueId}>${value}>
-          </div>
-        </div>
       </div>
-    `
+  `
   )
 }
 
@@ -76,11 +74,11 @@ const handleSubmit = async (e) => {
   //user's chat stripe
   chatContainer.innerHTML += chatStripe(false, data.get('prompt'));
 
-  form.reset();
+  form.reset(); //clear the textarea
 
   //AI's chat stripe
   const uniqueId = generateUniqueId();
-  chatContainer.innerHTML += chatStripe(true, " ", uniqueId)
+  chatContainer.innerHTML += chatStripe(true, " ", uniqueId);
 
   //as ai types, we need to see the message in view
   chatContainer.scrollTop = chatContainer.scrollHeight;
