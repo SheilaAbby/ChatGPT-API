@@ -1,24 +1,24 @@
 import bot from './assets/bot.svg'
 import user from './assets/user.svg'
 
-const form = document.querySelector('form');
-const chatContainer = document.querySelector('#chat_container');
+const form = document.querySelector('form')
+const chatContainer = document.querySelector('#chat_container')
 
 let loadInterval;
 
 // a function to load our messages
 
-function loader (element) {
-  element.textContent = '';
+function loader(element) {
+  element.textContent = ''
 
   loadInterval = setInterval(() => {
-    //update the text content
-    element.textContent += '.';
+      // Update the text content of the loading indicator
+      element.textContent += '.';
 
-    //reset when we have 3 dots on the loading indicator
-    if(element.textContent === '...'){
-      element.textContent = '';
-    }
+      // If the loading indicator has reached three dots, reset it
+      if (element.textContent === '...') {
+          element.textContent = '';
+      }
   }, 300);
 }
 
@@ -43,7 +43,7 @@ function generateUniqueId() {
   const randomNumber = Math.random();
   const hexadecimalString = randomNumber.toString(16);
 
-  return `id-${{timestamp}}-${{hexadecimalString}}`;
+  return `id-${timestamp}-${hexadecimalString}`;
 }
 
 //chat stripe
@@ -87,6 +87,32 @@ const handleSubmit = async (e) => {
   const messageDiv = document.getElementById(uniqueId);
 
   loader(messageDiv);
+
+  //fetch data from server - Bot's response
+  const response = await fetch('http://localhost:5001/post', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      prompt: data.get('prompt')
+  })
+  });
+
+  clearInterval(loadInterval);
+  messageDiv.innerHTML = '';
+
+  if (response.ok){
+    const data  = await response.json();
+    const parsedData = data.bot.trim();
+
+    typeText(messageDiv, parsedData);
+  } else {
+    const err = await response.text();
+    messageDiv.innerHTML = "Something went wrong!";
+
+    alert(err);
+  }
 }
 
 form.addEventListener('submit', handleSubmit);
